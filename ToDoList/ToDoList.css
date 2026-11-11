@@ -1,0 +1,58 @@
+
+#todo-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 50px;
+}
+.container-1{
+    background-color: rgb(20, 24, 80);
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    padding-left: 20px;
+    height: auto;
+    border-radius: 15px;
+}
+.container-1 p{
+    font-size: 2em;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+}
+#task-input{
+    padding: 10px ;
+    width: 80%;
+    border-radius: 10px;
+    border:none solid rgb(20, 24, 80);
+    
+}
+#add-Btn{
+    padding: 10px 20px 10px 20px;
+    background-color: cornflowerblue;
+    border-radius: 10px;    
+}
+#lists{
+    list-style-type: none;
+}
+#lists li {
+    background-color: rgb(20, 24, 80);
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5em;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+}
+#errorMsg{
+    font-size: 30px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: rgb(156, 135, 135);
+    margin-left: 50px;
+}
+#Datetime{
+    color: aliceblue;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
