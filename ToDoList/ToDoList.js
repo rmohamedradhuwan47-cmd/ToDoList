@@ -1,62 +1,156 @@
-// Get the form, input, and button elements
-const form = document.getElementById("task-form");
-const taskinput = document.getElementById("task-input");
-const taskbutton = document.getElementById("add-Btn");
-const tasklist = document.getElementById("lists");
-// Get the task list element
-const errormsg = document.getElementById("errorMsg");
 const Datetime = document.getElementById("Datetime");
-// Add an event listener to the form to handle the submit event
-console.log(form);
-console.log(taskinput);
-console.log(taskbutton);
+const input = document.getElementById("task-input");
+const button = document.getElementById("add-Btn");
+const list = document.getElementById("lists");
+const form = document.getElementById("Form");
+const errorMessage = document.getElementById("errorMsg");
 
-const now = new Date();
-console.log(now.toDateString());
-console.log(now.toLocaleDateString());
-console.log(now.toLocaleTimeString());
-Datetime.innerHTML=`[
-${now.toLocaleDateString()}]---
-${now.toLocaleTimeString()}
-`;
-class Task{
-    constructor(value){
-        this.value = value; 
-    }
+
+console.log(Datetime);
+console.log(input);
+console.log(button);
+console.log(list);
+console.log(form);
+console.log(errorMessage);
+//-----------------------------------------------------------------------------------------------------------//
+//                          creating the current time and displaying it to the webpage                       //
+//-----------------------------------------------------------------------------------------------------------//
+function showTime(){
+    const now = new Date();
+    Datetime.textContent = `Date and Time :
+    
+    |${now.toLocaleString()}|`;
 }
-const Tasks =[];
-form.addEventListener("submit",function(event){
-    event.preventDefault();
-    if(taskinput.value.trim() === ""){
-        errormsg.textContent = "Please enter a task";
+showTime();
+setInterval(showTime, 1000);
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------//
+//                          change the current array into strings  with JSON if we vist the page
+//-----------------------------------------------------------------------------------------------------------//
+
+//===========================================================================================================//
+let taskarray = JSON.parse(localStorage.getItem("tasks"))||[]; 
+//=========================================================================================================//
+
+//-----------------------------------------------------------------------------------------------------------//
+//                          set the changed strings into a array and storging in the browser
+//-----------------------------------------------------------------------------------------------------------//
+function saveTask(){
+    localStorage.setItem("tasks",JSON.stringify(taskarray));
+}
+
+
+
+
+//=========================================================================================================//
+// creating the submit event 
+form.addEventListener("submit" , function(e){
+    // stop reset the browser window 
+    e.preventDefault();
+    
+    //triming the white space 
+    const task = input.value.trim();
+//-----------------------------------------------------------------------------------------------------------//
+    //check if there is any white space
+    if(task ===""){
+        errorMessage.textContent="Please write the task";
         return;
     }
-    const taskvalue = new Task(taskinput.value);
-    Tasks.push(taskvalue);
-    tasklist.innerHTML+=`
-    <li> <input type="checkbox" id="checkbox" > ${taskvalue.value}
-    <button 
-    class="complete";
-    width="100px"; 
-    margin-top="10px";  
-    padding="40px";
-    
-    >Task Completed</button></li>
-    `;
-    errormsg.textContent="";
+//-----------------------------------------------------------------------------------------------------------//
+    //creating an object for the new task array 
+    const newtask = {text:task,dates:Date.now(),done:false};
+
+    //pushing the value to from old ---> new array (new task)
+    taskarray.push(newtask);
+//-----------------------------------------------------------------------------------------------------------//
+    //reseting the error message
+    errorMessage.textContent="";
+
+    console.log(task);
+    console.log(newtask);
+
+//-----------------------------------------------------------------------------------------------------------//
+//                                  calling the functions the save change i each process
+//-----------------------------------------------------------------------------------------------------------//
+    saveTask();
+    renderTasks();
+
+    //reset the from for doesn't get same task
     form.reset();
-    
-    console.log("Submitted");
-});
-tasklist.addEventListener("click",function(event){
-    const row = event.target.closest("li");
-    if(event.target.classList.contains("complete")){
-        if (event.target.checked) {
-        row.remove();
-    }
+})
+
+
+
+
+
+//===========================================================================================================//
+//creating the render function for adding --> checking ---> deleting buttons
+function renderTasks(){
+    list.innerHTML="";
+
+    //looping thought the each arrays in the taskarray
+    taskarray.forEach(function(item){
+
+        //creating a tag
+        const li = document.createElement("li");
+        //display it to the webpage
+        li.textContent= `${item.text}`;
+        //check if it is completed 
+        if(item.done === true){
+            li.classList.add("done");
+        }
+        // adding to the ul--->li
+        list.appendChild(li);
+        
+
+        //-----------------------------------------------------------------------------------------------------------//
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.dataset.id=item.dates;
+        checkbox.checked=item.done;
+        li.prepend(checkbox);
+
+        //-----------------------------------------------------------------------------------------------------------//
+        const removebtn = document.createElement("button");
+        removebtn.textContent="🗑️";
+        removebtn.dataset.id= item.dates;
+        li.appendChild(removebtn);
+        
+    })    
 }
-    console.log(row);
-    console.log("checked");
 
 
-});
+
+
+
+
+//===========================================================================================================//
+list.addEventListener("click", function(e){
+
+    // CASE 1: trash button
+    if(e.target.tagName === "BUTTON"){
+        const deletedId = Number(e.target.dataset.id);
+        taskarray = taskarray.filter(function(item){
+            return item.dates !== deletedId;
+        })
+        saveTask();
+        renderTasks();
+    }
+//-----------------------------------------------------------------------------------------------------------//
+    // CASE 2: checkbox (separate if, same level)
+    if(e.target.type === "checkbox"){
+        const clickedId = Number(e.target.dataset.id);
+        taskarray.forEach(function(item){
+            if(item.dates === clickedId)
+                item.done = !item.done;
+        })
+        saveTask();
+        renderTasks();
+    }
+
+})
+
+renderTasks();
